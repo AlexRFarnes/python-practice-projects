@@ -45,11 +45,15 @@ def format_task_list(tasks: list[dict]) -> str:
     Each line should make it clear what the task's id, description, and done
     status are (e.g. something a user could read directly in the terminal).
     """
-    max_width = max((len(task["description"]) for task in tasks), default=10)
-    output = f"{'Id':<1000} | {'Description':<{max_width}} | {'Done':>4}"
+    max_width_id = max((max((len(str(task["id"])) for task in tasks)), 5))
+    max_width_des = max((max((len(task["description"]) for task in tasks)), 15))
+
+    output = (
+        f"{'Id':<{max_width_id}} | {'Description':<{max_width_des}} | {'Done':^4}"
+        + "\n"
+    )
 
     for task in tasks:
-        output += f"{task['id']:<1000} | {task['description']:<{max_width}} \
-                | {('O' if task['done'] else ''):>4}"
+        output += f"{task['id']:<{max_width_id}} | {task['description']:<{max_width_des}} | {('O' if task['done'] else 'X'):^4}\n"
 
     return output

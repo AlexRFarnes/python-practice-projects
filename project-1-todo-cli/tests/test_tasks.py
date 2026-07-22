@@ -9,4 +9,8 @@ from pathlib import Path
 
 
 TEST_FILE = Path(__file__).parent / "test.json"
-tasks = [{1: "TODO 1"}, {2: "TODO 2"}, {3: "TODO 3"}]
+tasks = [
+    {"id": 0, "description": "Buy milk", "done": True},
+    {"id": 1, "description": "Pay bills", "done": False},
+    {"id": 2, "description": "Cook dinner", "done": False},
+]
