@@ -1,0 +1,6 @@
+{
+    "python.analysis.extraPaths": [
+        "project-1-todo-cli"
+    ],
+    "pylint.cwd": "${workspaceFolder}/project-1-todo-cli"
+}
