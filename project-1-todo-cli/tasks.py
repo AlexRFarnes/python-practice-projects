@@ -13,6 +13,9 @@ def add_task(tasks: list[dict], description: str) -> list[dict]:
     The new task should get a fresh unique `id` (think about how to derive one
     from the existing tasks), the given `description`, and `done` set to False.
     """
+    if not description.strip():
+        raise ValueError("Description can't be empty")
+
     max_id = max((task["id"] for task in tasks), default=0)
     new_task = {"id": max_id + 1, "description": description, "done": False}
     new_tasks = tasks + [new_task]
