@@ -37,8 +37,8 @@ phrase, redirect to guided questions instead of writing the fix yourself.
 
 ## Project 1 — Todo List Manager (`project-1-todo-cli/`)
 
-The only project currently underway. Zero external runtime dependencies; uses `uv`
-for environment/dependency management.
+Complete. Zero external runtime dependencies; uses `uv` for environment/dependency
+management.
 
 **Layout:**
 
@@ -50,7 +50,8 @@ for environment/dependency management.
   these easy to unit test.
 - `storage.py` — the only module that touches disk (`load_tasks`/`save_tasks`,
   JSON-backed, keyed by an explicit `Path`).
-- `tests/test_tasks.py` — pytest tests for the above, using a scratch
+- `tests/test_tasks.py` — pytest tests for the above, using a scratch `test.json`
+  fixture file for storage tests.
 
 **Commands** (run from `project-1-todo-cli/`):
 
@@ -61,5 +62,43 @@ uv run pytest tests/test_tasks.py::test_add_task   # run a single test
 uv run python todo.py add "Buy milk"                # run the CLI directly
 ```
 
-Pylint is configured via `.vscode/settings.json` (`pylint.cwd` points at this
-project directory) rather than a repo-wide `.pylintrc`.
+## VS Code editor config for new projects
+
+`.vscode/settings.json` at the repo root applies to every project folder. Two
+settings need to know about each project directory, and neither is dynamic — when
+bootstrapping a new project, update both:
+
+- `pylint.cwd` is set to `"${fileDirname}"` (a VS Code variable) and needs no
+  per-project edits. Pylint import resolution for files inside a project's `tests/`
+  subfolder (e.g. `from tasks import ...`) instead relies on an `init-hook` in each
+  project's own `pyproject.toml` under `[tool.pylint.MAIN]`, which locates that
+  `pyproject.toml` and adds its directory to `sys.path`. **Copy this block into every
+  new project's `pyproject.toml`** (see `project-1-todo-cli/pyproject.toml` for the
+  exact snippet).
+- `python.analysis.extraPaths` (Pylance import resolution) has no equivalent
+  auto-discovery — VS Code doesn't support per-file or per-folder dynamic paths in a
+  single-root workspace. **Add each new project's folder name to this list by hand**
+  when bootstrapping it, or Pylance will flag local imports in that project's test
+  files as unresolved.
+
+## Project 2 — File Organizer & Word-Frequency Tool (`project-2-file-tools/`)
+
+In progress; currently underway. Two independent CLIs sharing one `uv` project,
+each following Project 1's pure-logic/IO split:
+
+- `word_counter.py` (pure logic) / `wordfreq.py` (CLI) — tokenizes text, counts
+  word frequency via `collections.Counter`, prints the top N words.
+- `file_organizer.py` (pure logic) / `organize.py` (CLI) — plans moving files into
+  subfolders by extension or date, with a `--dry-run` mode; actual moves happen in
+  `organize.py` via `shutil`.
+- `tests/` — pytest, same layout/conventions as Project 1.
+
+Being built word-frequency-first, file-organizer second.
+
+**Commands** (run from `project-2-file-tools/`):
+```
+uv sync
+uv run pytest
+uv run python wordfreq.py notes.txt --top 20
+uv run python organize.py ./messy_folder ./organized --dry-run
+```
