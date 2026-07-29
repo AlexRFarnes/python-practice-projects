@@ -6,6 +6,8 @@ and `done` (bool). None of these functions read or write files directly — that
 easy to test without touching disk.
 """
 
+import copy
+
 
 def add_task(tasks: list[dict], description: str) -> list[dict]:
     """Return a new task list with one additional task appended.
@@ -18,9 +20,9 @@ def add_task(tasks: list[dict], description: str) -> list[dict]:
 
     max_id = max((task["id"] for task in tasks), default=0)
     new_task = {"id": max_id + 1, "description": description, "done": False}
-    new_tasks = tasks + [new_task]
+    updated_tasks = tasks + [new_task]
 
-    return new_tasks
+    return updated_tasks
 
 
 def mark_done(tasks: list[dict], task_id: int) -> list[dict]:
@@ -29,17 +31,19 @@ def mark_done(tasks: list[dict], task_id: int) -> list[dict]:
     Tasks that don't match `task_id` should be unaffected. Consider what should
     happen if `task_id` doesn't match anything in the list.
     """
-    for task in tasks:
+
+    updated_tasks = copy.deepcopy(tasks)
+    for task in updated_tasks:
         if task["id"] == task_id:
             task["done"] = True
 
-    return tasks
+    return updated_tasks
 
 
 def remove_task(tasks: list[dict], task_id: int) -> list[dict]:
     """Return a new task list with the task matching `task_id` removed entirely."""
-    new_tasks = [task for task in tasks if task["id"] != task_id]
-    return new_tasks
+    updated_tasks = [task for task in tasks if task["id"] != task_id]
+    return updated_tasks
 
 
 def format_task_list(tasks: list[dict]) -> str:

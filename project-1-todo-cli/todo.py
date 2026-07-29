@@ -57,26 +57,26 @@ def main() -> None:
     """
     parser = build_parser()
     args = parser.parse_args()
+    tasks = load_tasks(TASKS_FILE)
 
     if args.command == "add":
-        tasks = load_tasks(TASKS_FILE)
         tasks = add_task(tasks, args.description)
         save_tasks(TASKS_FILE, tasks)
         print("Todo added!")
     elif args.command == "list":
-        tasks = load_tasks(TASKS_FILE)
         print(format_task_list(tasks))
     elif args.command == "done":
-        tasks = load_tasks(TASKS_FILE)
         tasks = mark_done(tasks, args.id)
         save_tasks(TASKS_FILE, tasks)
         print(f"Todo {args.id} done!")
     elif args.command == "remove":
-        tasks = load_tasks(TASKS_FILE)
         tasks = remove_task(tasks, args.id)
         save_tasks(TASKS_FILE, tasks)
         print(f"Todo {args.id} removed!")
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except ValueError as e:
+        print(e)
