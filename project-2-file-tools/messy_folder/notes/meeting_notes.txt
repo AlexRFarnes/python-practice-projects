@@ -1,0 +1,5 @@
+Meeting notes - Monday standup
+
+- Reviewed progress on the file organizer project
+- Discussed word frequency edge cases (punctuation, case folding)
+- Action item: write more tests before moving on

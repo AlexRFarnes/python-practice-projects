@@ -3,7 +3,7 @@
 import argparse
 from pathlib import Path
 
-from word_counter import count_words, tokenize, top_n
+from word_counter import count_words, tokenize, top_n  # noqa: F401
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -18,10 +18,31 @@ def build_parser() -> argparse.ArgumentParser:
         wordfreq notes.txt
         wordfreq ./notes_folder --top 20
     """
-    raise NotImplementedError
+
+    parser = argparse.ArgumentParser(
+        description="A CLI tool to count the words in text files \
+            that shows the top N most frequent words"
+    )
+
+    parser.add_argument(
+        "path", type=Path, help="path to a single text file or directory to scan."
+    )
+
+    parser.add_argument(
+        "-r",
+        dest="recursive",
+        action="store_true",
+        help="scan recursively the directory, if the path is a file it will be ignored",
+    )
+
+    parser.add_argument(
+        "-n", "--top", type=int, default=10, help="number of top words to display"
+    )
+
+    return parser
 
 
-def read_text(path: Path) -> str:
+def read_text(path: Path, recursive: bool = False) -> str:
     """Return the combined text content at `path`.
 
     If `path` is a single file, return its contents. If it's a directory, read
@@ -29,7 +50,24 @@ def read_text(path: Path) -> str:
     contents. Consider what "every text file" should mean here — all files? Only
     certain extensions like `.txt`/`.md`? That's your call.
     """
-    raise NotImplementedError
+    if not path.exists():
+        raise FileNotFoundError("The path does not exist")
+
+    text = ""
+
+    if path.is_file() and path.suffix == ".txt":
+        text = path.read_text(encoding="utf-8")
+    else:
+        if recursive:
+            text = "\n".join(
+                [f.read_text(encoding="utf-8") for f in path.rglob("*.txt")]
+            )
+        else:
+            text = "\n".join(
+                [f.read_text(encoding="utf-8") for f in path.glob("*.txt")]
+            )
+
+    return text
 
 
 def main() -> None:
@@ -37,7 +75,18 @@ def main() -> None:
 
     Each printed line should show the word and its count, most frequent first.
     """
-    raise NotImplementedError
+    parser = build_parser()
+
+    args = parser.parse_args()
+
+    text = ""
+
+    try:
+        text = read_text(args.path, args.recursive)
+    except FileNotFoundError as ex:
+        print(ex)
+
+    print(text)
 
 
 if __name__ == "__main__":
