@@ -5,6 +5,7 @@ this module pure (text/tokens in, data out) mirrors Project 1's tasks.py/storage
 split and makes it easy to test without touching disk.
 """
 
+import re
 from collections import Counter
 
 # A minimal starter set — extend this with whatever words you think are too common
@@ -19,7 +20,7 @@ def tokenize(text: str) -> list[str]:
     what `re` tool lets you pull out contiguous runs of letters (and maybe digits
     or apostrophes, your call) from a string in one pass.
     """
-    raise NotImplementedError
+    return re.findall(r"[a-z]+(?:'[a-z]+)*", text.lower())
 
 
 def count_words(tokens: list[str], stopwords: set[str] = STOPWORDS) -> Counter:

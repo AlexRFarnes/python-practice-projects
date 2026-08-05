@@ -86,7 +86,11 @@ def main() -> None:
     except FileNotFoundError as ex:
         print(ex)
 
-    print(text)
+    tokens = tokenize(text)
+
+    counter = count_words(tokens)
+
+    print(counter)
 
 
 if __name__ == "__main__":
