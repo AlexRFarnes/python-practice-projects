@@ -10,7 +10,7 @@ from collections import Counter
 
 # A minimal starter set — extend this with whatever words you think are too common
 # to be interesting (e.g. "the", "a", "and", ...). Keep it lowercase.
-STOPWORDS: set[str] = set()
+STOPWORDS: set[str] = {"the", "a", "an", "and", "is", "are", "but", "to"}  # set literal
 
 
 def tokenize(text: str) -> list[str]:
@@ -23,12 +23,15 @@ def tokenize(text: str) -> list[str]:
     return re.findall(r"[a-z]+(?:'[a-z]+)*", text.lower())
 
 
-def count_words(tokens: list[str], stopwords: set[str] = STOPWORDS) -> Counter:
+def count_words(tokens: list[str], stopwords: set[str] | None = None) -> Counter:
     """Return a `Counter` mapping each token to how many times it appears.
 
     Tokens present in `stopwords` should be excluded entirely from the result.
     """
-    raise NotImplementedError
+    if stopwords is None:
+        stopwords = STOPWORDS
+
+    return Counter(filter(lambda token: token not in stopwords, tokens))
 
 
 def top_n(counts: Counter, n: int) -> list[tuple[str, int]]:
@@ -36,4 +39,4 @@ def top_n(counts: Counter, n: int) -> list[tuple[str, int]]:
 
     `Counter` already has a method built for exactly this — look it up.
     """
-    raise NotImplementedError
+    return counts.most_common(n)

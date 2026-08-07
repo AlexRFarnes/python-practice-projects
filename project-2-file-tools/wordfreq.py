@@ -3,7 +3,7 @@
 import argparse
 from pathlib import Path
 
-from word_counter import count_words, tokenize, top_n  # noqa: F401
+from word_counter import count_words, tokenize, top_n
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -90,7 +90,9 @@ def main() -> None:
 
     counter = count_words(tokens)
 
-    print(counter)
+    top_n_words = top_n(counter, args.top)
+
+    print(top_n_words)
 
 
 if __name__ == "__main__":
