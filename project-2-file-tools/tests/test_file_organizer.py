@@ -1,4 +1,4 @@
-from file_organizer import group_by_date, group_by_extension, plan_moves
+from file_organizer import group_by_date, group_by_extension, plan_moves  # noqa: F401
 
 # Write your own tests here for the functions in file_organizer.py.
 # A few things worth thinking about testing once you get there:
