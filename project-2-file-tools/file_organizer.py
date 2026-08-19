@@ -5,6 +5,7 @@ extension, mtime) — they don't move/copy anything themselves. That's `organize
 job, mirroring the pure-logic/IO split used in word_counter.py and Project 1.
 """
 
+from collections import defaultdict
 from pathlib import Path
 
 
@@ -14,7 +15,23 @@ def group_by_extension(paths: list[Path]) -> dict[str, list[Path]]:
     Files with no extension should land in some sensible bucket (your call what
     to call it, e.g. "no_extension").
     """
-    raise NotImplementedError
+    extension_group = defaultdict(list)
+
+    for file in paths:
+        if not file.is_file():
+            continue
+
+        stem = file.stem
+        extension = file.suffix[1:]
+
+        if not extension and stem.startswith("."):
+            extension_group["dotfile"].append(file)
+        elif not extension and not stem.startswith("."):
+            extension_group["no_extension"].append(file)
+        else:
+            extension_group[extension].append(file)
+
+    return extension_group
 
 
 def group_by_date(paths: list[Path]) -> dict[str, list[Path]]:
@@ -24,7 +41,9 @@ def group_by_date(paths: list[Path]) -> dict[str, list[Path]]:
     raise NotImplementedError
 
 
-def plan_moves(paths: list[Path], dest_root: Path, group_by: str) -> list[tuple[Path, Path]]:
+def plan_moves(
+    paths: list[Path], dest_root: Path, group_by: str
+) -> list[tuple[Path, Path]]:
     """Return a list of (source_path, destination_path) pairs describing the move.
 
     `group_by` will be either "extension" or "date" — use the matching grouping
